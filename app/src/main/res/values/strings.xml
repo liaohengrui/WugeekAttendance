@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">WuGeek考勤</string>
+    <string name="button_login">登录</string>
+    <string name="button_register">点击注册</string>
+
+    <string name="button_back_login">返回登录</string>
+
+    <string name="text_input_name_hint">用户名</string>
+    <string name="text_input_pd_hint">密码</string>
+
+    <string name="tv_register">注册新用户</string>
+    <string name="tv_can_not_login">无法登录 ?</string>
+
+    <string name="tv_loading">加载中</string>
+
+    <string name="title_activity_wxentry">WXEntryActivity</string>
+    <string name="Upload">Upload</string>
+    <string name="Error">Error</string>
+    <string name="Complete">Complete</string>
+    <string name="IndeterminateProgressSample">Indeterminate Progress Sample</string>
+    <string name="IntegerProgressSample">Integer Progress Sample</string>
+    <string name="StateChangeSample">State Change Sample</string>
+    <string name="ProgressPaddingSample">Progress Padding Sample</string>
+    <string name="CustomSelectorSample">Custom Selector Sample</string>
+    <array name="sample_list">
+        <item>@string/IndeterminateProgressSample</item>
+        <item>@string/IntegerProgressSample</item>
+        <item>@string/StateChangeSample</item>
+        <item>@string/ProgressPaddingSample</item>
+        <item>@string/CustomSelectorSample</item>
+    </array>
+    <string name="title_activity_online_info">OnlineInfo</string>
+    <string name="title_activity_day_online_info">DayOnlineInfo</string>
+
+
+    <string-array name="english_week_string_array">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
+    <string name="title_activity_register">RegisterActivity</string>
+</resources>

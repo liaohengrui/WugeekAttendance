@@ -1,0 +1,13 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_focused="true"
+        android:drawable="@color/colorButtonClick"/>
+
+    <item
+        android:state_pressed="true"
+        android:drawable="@drawable/shape_border_press"/>
+
+    <item
+        android:drawable="@drawable/shape_border_button"/>
+
+</selector>

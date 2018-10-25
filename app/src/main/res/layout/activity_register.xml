@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.wugeek.wugeek.component.CustomToolBar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:left_tv_visible="true"
+        app:right_btn_visible="true"
+        app:title_text="注册"
+        app:title_visible="true"
+        tools:context="com.example.zjyang.customtoorbar.MainActivity"></com.wugeek.wugeek.component.CustomToolBar>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="注册信息详情"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="用户名："
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <EditText
+        android:id="@+id/text_userid"
+        android:layout_width="221dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:paddingTop="0dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/user_id"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/user_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="密码："
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_id" />
+
+    <EditText
+        android:id="@+id/text_password"
+        android:layout_width="221dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:inputType="textPassword"
+        android:paddingTop="0dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/user_id"
+        app:layout_constraintTop_toBottomOf="@id/text_userid" />
+
+    <TextView
+        android:id="@+id/user_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="手机号："
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_password" />
+
+    <EditText
+        android:id="@+id/text_phone"
+        android:layout_width="221dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingTop="0dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/user_id"
+        app:layout_constraintTop_toBottomOf="@id/text_password" />
+
+
+    <TextView
+        android:id="@+id/check_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="验证码："
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_phone" />
+
+
+    <EditText
+        android:id="@+id/text_check_code"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingTop="0dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/user_phone"
+        app:layout_constraintTop_toBottomOf="@id/text_phone" />
+
+    <Button
+        android:id="@+id/check_code_button"
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/check_border"
+        android:text="获取验证码"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/text_check_code"
+        app:layout_constraintTop_toBottomOf="@id/text_phone" />
+
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/check_border"
+        android:text="注册"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_phone" />
+
+</android.support.constraint.ConstraintLayout>
