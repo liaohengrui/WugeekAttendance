@@ -71,7 +71,7 @@ public class OnlineInfo extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        QMUIGroupListView mGroupListView = findViewById(R.id.groupListView);
+        final QMUIGroupListView mGroupListView = findViewById(R.id.groupListView);
         mGroupListView.removeAllViews();
         for (com.haibin.calendarview.Calendar calendar : schemes) {
             final QMUICommonListItemView normalItem = mGroupListView.createItemView(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay());
@@ -108,29 +108,36 @@ public class OnlineInfo extends AppCompatActivity {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    String token = response.body().string();
+                    final String token = response.body().string();
                     Log.d(TAG, "onResponse: " + token);
                     onlineInfo = JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class);
-                    handler.post(runnableUi);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            normalItem.setDetailText("当日时长： " + JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class).getData().get(0).getSum() + "小时");
+                            View.OnClickListener onClickListener = new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (v instanceof QMUICommonListItemView) {
+                                        CharSequence text = ((QMUICommonListItemView) v).getText();
+                                        Intent intent = new Intent(OnlineInfo.this, DayOnlineInfo.class);
+                                        intent.putExtra("data", (Serializable) JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class));
+                                        startActivity(intent);
+                                    }
+                                }
+                            };//默认文字在左边   自定义加载框按钮
+
+                            QMUIGroupListView.newSection(OnlineInfo.this)
+                                    .setTitle("考勤时间概况")
+                                    .addItemView(normalItem, onClickListener)
+                                    .addTo(mGroupListView);
+                        }
+                    });
+
                 }
             });
 
-            View.OnClickListener onClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (v instanceof QMUICommonListItemView) {
-                        CharSequence text = ((QMUICommonListItemView) v).getText();
-                        Intent intent = new Intent(OnlineInfo.this, DayOnlineInfo.class);
-                        intent.putExtra("data", (Serializable) onlineInfo);
-                        startActivity(intent);
-                    }
-                }
-            };//默认文字在左边   自定义加载框按钮
 
-            QMUIGroupListView.newSection(OnlineInfo.this)
-                    .setTitle("考勤时间概况")
-                    .addItemView(normalItem, onClickListener)
-                    .addTo(mGroupListView);
 
         }
 
