@@ -46,6 +46,7 @@
         android:layout_height="35dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="28dp"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:gravity="center"
         android:paddingTop="0dp"
         android:textColor="#000000"
@@ -71,6 +72,7 @@
         android:layout_height="35dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="20dp"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
         android:gravity="center"
         android:inputType="textPassword"
         android:paddingTop="0dp"
@@ -78,6 +80,37 @@
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/user_id"
         app:layout_constraintTop_toBottomOf="@id/text_userid" />
+
+
+    <TextView
+        android:id="@+id/user_repassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="确认密码："
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_password" />
+
+    <EditText
+        android:id="@+id/text_repassword"
+        android:layout_width="221dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
+        android:gravity="center"
+        android:inputType="textPassword"
+        android:paddingTop="0dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/user_id"
+        app:layout_constraintTop_toBottomOf="@id/text_password" />
+
+
+
 
     <TextView
         android:id="@+id/user_phone"
@@ -89,7 +122,7 @@
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_password" />
+        app:layout_constraintTop_toBottomOf="@id/user_repassword" />
 
     <EditText
         android:id="@+id/text_phone"
@@ -97,12 +130,14 @@
         android:layout_height="35dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="20dp"
+        android:digits="0123456789"
+        android:maxLength="11"
         android:gravity="center"
         android:paddingTop="0dp"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/user_id"
-        app:layout_constraintTop_toBottomOf="@id/text_password" />
+        app:layout_constraintTop_toBottomOf="@id/text_repassword" />
 
 
     <TextView
@@ -128,7 +163,7 @@
         android:paddingTop="0dp"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintLeft_toRightOf="@+id/user_phone"
+        app:layout_constraintLeft_toRightOf="@+id/user_id"
         app:layout_constraintTop_toBottomOf="@id/text_phone" />
 
     <Button

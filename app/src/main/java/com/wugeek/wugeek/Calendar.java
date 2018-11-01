@@ -3,6 +3,7 @@ package com.wugeek.wugeek;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -143,10 +144,39 @@ public class Calendar extends BaseActivity implements
 
     @Override
     public void onClick(View v) {
+        sortTime(schemes);
         Log.d(TAG, "onClick: -------------------------------" + v);
         Intent intent = new Intent();
         intent.putExtra("time_data", (Serializable) schemes);
         setResult(RESULT_OK, intent);
         finish();
     }
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        sortTime(schemes);
+        Intent intent = new Intent();
+        intent.putExtra("time_data", (Serializable)  schemes);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void sortTime(List<com.haibin.calendarview.Calendar> schemes) {
+        for (int y = 0; y < schemes.size(); y++) {
+            for (int z = (y + 1); z < schemes.size(); z++) {
+                int x1 = Integer.parseInt(schemes.get(y).toString());
+                int x2 = Integer.parseInt(schemes.get(z).toString());
+                if (x1 - x2 > 0) {
+                    schemes.add(y, schemes.get(z));
+                    schemes.add(z + 1, schemes.get(y + 1));
+                    schemes.remove(y + 1);
+                    schemes.remove(z + 1);
+                }
+            }
+        }
+    }
+
 }

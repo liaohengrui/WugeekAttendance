@@ -53,7 +53,17 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         findViewById(R.id.btn_login).setOnClickListener(this);
         findViewById(R.id.wx_login).setOnClickListener(this);
         findViewById(R.id.tv_register).setOnClickListener(this);
+        initData();
 
+
+    }
+
+    private void initData() {
+
+        String userName = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
+        String passWord = getSharedPreferences("user", MODE_PRIVATE).getString("password", "");
+        ((EditText) findViewById(R.id.et_name)).setText(userName);
+        ((EditText) findViewById(R.id.et_password)).setText(passWord);
     }
 
 
@@ -74,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                         tipDialog.dismiss();
                         Intent intent = new Intent(MainActivity.this, OnlineInfo.class);
                         finish();
+
                         startActivity(intent);
                     }
                 };
@@ -110,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                         if (code == 1) {
                             SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
                             editor.putString("token", token);
+                            editor.putString("username", user_name);
+                            editor.putString("password", pass_word);
                             editor.apply();
                             String macJson = " {\n" +
                                     "     \"mac\":\"" + mac + "\"\n" +
@@ -156,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 startActivity(intent);
                 break;
             default:
-                System.out.println("gg");
         }
 
     }

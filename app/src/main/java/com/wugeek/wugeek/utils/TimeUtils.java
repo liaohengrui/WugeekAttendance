@@ -1,8 +1,11 @@
 package com.wugeek.wugeek.utils;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TimeUtils {
     public static String toChinaTime(String timestamp) {
@@ -21,5 +24,11 @@ public class TimeUtils {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public static String toHours(double time) {
+
+
+        return String.format("%.2f", time);
     }
 }

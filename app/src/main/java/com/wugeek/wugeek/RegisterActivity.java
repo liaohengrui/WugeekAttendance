@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,9 @@ import com.wugeek.wugeek.bean.RegisterInfo;
 import com.wugeek.wugeek.utils.MacUtils;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
     Handler handler;
     QMUITipDialog errorDialog;
     QMUITipDialog okDialog;
+    int time = 60;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
         String userName = ((EditText) findViewById(R.id.text_userid)).getText().toString();
         String phone = ((EditText) findViewById(R.id.text_phone)).getText().toString();
         String code = ((EditText) findViewById(R.id.text_check_code)).getText().toString();
+        String rePassword = ((EditText) findViewById(R.id.text_repassword)).getText().toString();
         errorDialog = new QMUITipDialog.Builder(RegisterActivity.this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                 .setTipWord("请检查填写信息")
@@ -70,10 +76,12 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                 .setTipWord("正在加载")
                 .create();
 
+
         switch (v.getId()) {
             case R.id.button2:
-                if (code.isEmpty() || phone.isEmpty() || userName.isEmpty() || password.isEmpty()) {
-                    handler.post(runnableErrorUi(true));
+                if (code.isEmpty() || phone.isEmpty() || userName.isEmpty() || password.isEmpty() || rePassword.isEmpty()
+                        || !rePassword.equals(password)) {
+                    handler.post(runnableErrorUi(false));
                 } else {
                     String url2 = "http://api.wugeek.vczyh.com/auth/user/register/account2";
                     String json2 = "{\n" +
@@ -159,7 +167,28 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                         String token = response.body().string();
                         Integer code = JSON.parseObject(token).getInteger("code");
                         if (code == 1) {
-                            handler.post(runnableErrorUi(true));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Button button = findViewById(R.id.check_code_button);
+                                    button.setEnabled(false);
+                                    button.setBackgroundResource(R.drawable.check_border2);
+                                    /** 倒计时60秒，一次1秒 */
+                                    CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
+                                        @Override
+                                        public void onTick(long millisUntilFinished) {
+                                            // TODO Auto-generated method stub
+                                            button.setText(millisUntilFinished / 1000 + "秒");
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+                                            button.setText("发送验证码");
+                                            button.setEnabled(true);
+                                        }
+                                    }.start();
+                                }
+                            });
                         } else {
                             handler.post(runnableErrorUi(false));
                         }

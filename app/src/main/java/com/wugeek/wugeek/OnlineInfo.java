@@ -2,18 +2,27 @@ package com.wugeek.wugeek;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -22,6 +31,9 @@ import com.qmuiteam.qmui.widget.QMUILoadingView;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.wugeek.wugeek.R;
+import com.wugeek.wugeek.base.TimeAdapter;
+import com.wugeek.wugeek.bean.EchartsLineBean;
+import com.wugeek.wugeek.component.RecycleViewDivider;
 import com.wugeek.wugeek.utils.TimeUtils;
 
 import java.io.IOException;
@@ -31,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -40,6 +53,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
+@SuppressWarnings("ALL")
 public class OnlineInfo extends AppCompatActivity {
     List<com.haibin.calendarview.Calendar> schemes = new ArrayList<>();
     private Handler handler = null;
@@ -47,6 +61,11 @@ public class OnlineInfo extends AppCompatActivity {
     private static final String TAG = "OnlineInfo";
     // 用来计算返回键的点击间隔时间
     private long exitTime = 0;
+    private EchartsLineBean echartsLineBean = new EchartsLineBean();
+    WebView webView;
+    RecyclerView recyclerView;
+
+    TimeAdapter timeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +73,8 @@ public class OnlineInfo extends AppCompatActivity {
         handler = new Handler();
         setContentView(R.layout.activity_online_info);
         initButton();
+
+
     }
 
     public void initButton() {
@@ -63,6 +84,7 @@ public class OnlineInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OnlineInfo.this, Calendar.class);
+                echartsLineBean = new EchartsLineBean();
                 startActivityForResult(intent, 1);
             }
         });
@@ -71,75 +93,81 @@ public class OnlineInfo extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        final QMUIGroupListView mGroupListView = findViewById(R.id.groupListView);
-        mGroupListView.removeAllViews();
-        for (com.haibin.calendarview.Calendar calendar : schemes) {
-            final QMUICommonListItemView normalItem = mGroupListView.createItemView(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay());
-            final String token = getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
-            long endTime = TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) + 10800000L;
-            final String json = "{\"start_time\":" + TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) +
-                    ",\"end_time\":" + endTime + "}";
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().readTimeout(5, TimeUnit.SECONDS).build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (com.haibin.calendarview.Calendar calendar : schemes) {
+                    final String token = getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
+                    long endTime = TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) + 10800000L;
+                    final String json = "{\"start_time\":" + TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) +
+                            ",\"end_time\":" + endTime + "}";
+                    //查询在线时长
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
 
-            final Runnable runnableUi = new Runnable() {
-                @Override
-                public void run() {
-                    normalItem.setDetailText("当日时长： " + onlineInfo.getData().get(0).getSum() + "小时");
+                    final Request request = new Request.Builder()
+                            .url("http://api.wugeek.vczyh.com/attendance/user/time/getTable")
+                            .addHeader("token", token)
+                            .post(requestBody)
+                            .build();
+                    Log.d(TAG, json);
+                    Call call = okHttpClient.newCall(request);
+                    try {
+                        Response response = call.execute();
+                        String responseBody = response.body().string();
+                        echartsLineBean.times.add(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay());
+                        onlineInfo = JSON.parseObject(responseBody, com.wugeek.wugeek.bean.OnlineInfo.class);
+                        echartsLineBean.hours.add(TimeUtils.toHours(Double.valueOf(onlineInfo.getData().get(0).getSum())/3600000));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            };
-            //查询在线时长
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView = findViewById(R.id.time_scroll);
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(OnlineInfo.this);
+                        recyclerView.setLayoutManager(layoutManager);
+                        timeAdapter = new TimeAdapter(echartsLineBean);
+                        recyclerView.setAdapter(timeAdapter);
+                        RecycleViewDivider recycleViewDivider = new RecycleViewDivider(OnlineInfo.this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(OnlineInfo.this, R.color.bg_toolbar));
+                        recyclerView.addItemDecoration(recycleViewDivider);
 
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
-                    .readTimeout(20, TimeUnit.SECONDS)//设置读取超时时间
-                    .build();
-            final Request request = new Request.Builder()
-                    .url("http://api.wugeek.vczyh.com/attendance/user/time/getTable")
-                    .addHeader("token", token)
-                    .post(requestBody)//默认就是GET请求，可以不写
-                    .build();
-            Log.d(TAG, json);
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.d(TAG, "onFailure:sssssss " + e);
-                }
+                        webView = findViewById(R.id.chartshow_wb);
+                        webView.getSettings().setAllowFileAccess(true);
+                        webView.getSettings().setJavaScriptEnabled(true);
+                        webView.loadUrl("file:///android_asset/myechart.html");
+                        // disable scroll on touch
+                        webView.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                return (event.getAction() == MotionEvent.ACTION_MOVE);
+                            }
+                        });
+                        webView.setWebViewClient(new WebViewClient() {
+                            @Override
+                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                view.loadUrl(url);
+                                return super.shouldOverrideUrlLoading(view, url);
+                            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    final String token = response.body().string();
-                    Log.d(TAG, "onResponse: " + token);
-                    onlineInfo = JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            normalItem.setDetailText("当日时长： " + JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class).getData().get(0).getSum() + "小时");
-                            View.OnClickListener onClickListener = new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (v instanceof QMUICommonListItemView) {
-                                        CharSequence text = ((QMUICommonListItemView) v).getText();
-                                        Intent intent = new Intent(OnlineInfo.this, DayOnlineInfo.class);
-                                        intent.putExtra("data", (Serializable) JSON.parseObject(token, com.wugeek.wugeek.bean.OnlineInfo.class));
-                                        startActivity(intent);
-                                    }
-                                }
-                            };//默认文字在左边   自定义加载框按钮
+                            @Override
+                            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                                super.onPageStarted(view, url, favicon);
+                            }
 
-                            QMUIGroupListView.newSection(OnlineInfo.this)
-                                    .setTitle("考勤时间概况")
-                                    .addItemView(normalItem, onClickListener)
-                                    .addTo(mGroupListView);
-                        }
-                    });
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                //最好在这里调用js代码 以免网页未加载完成
+                                webView.loadUrl("javascript:createLineChart(" + JSONObject.toJSONString(echartsLineBean) + ");");
+                            }
+                        });
 
-                }
-            });
+                    }
+                });
+            }
+        }).start();
 
-
-
-        }
 
     }
 
@@ -149,6 +177,7 @@ public class OnlineInfo extends AppCompatActivity {
         schemes = (List<com.haibin.calendarview.Calendar>) data.getSerializableExtra("time_data");
 
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

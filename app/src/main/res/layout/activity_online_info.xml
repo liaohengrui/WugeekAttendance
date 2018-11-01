@@ -11,19 +11,37 @@
         android:layout_height="120dp"
         android:background="@color/colorPrimary" />
 
-    <ScrollView
+    <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/qmui_topbar_height"
-        android:background="@color/qmui_config_color_background">
+        android:layout_marginBottom="50dp">
 
-        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
-            android:id="@+id/groupListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-    </ScrollView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/time_scroll"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:layout_marginTop="?attr/qmui_topbar_height"
+            android:background="@color/qmui_config_color_background"
+            app:layout_heightPercent="60%"
+            app:layout_widthPercent="100%">
 
+        </android.support.v7.widget.RecyclerView>
+
+
+        <WebView
+            android:id="@+id/chartshow_wb"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="bottom"
+            app:layout_heightPercent="30%"
+            app:layout_widthPercent="100%"></WebView>
+
+    </android.support.percent.PercentFrameLayout>
 
     <FrameLayout
         android:id="@+id/fl_current"
