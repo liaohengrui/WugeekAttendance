@@ -117,6 +117,18 @@
         android:textColor="@color/colorPrimary" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="Powered by Pushy"
+        android:textColor="@color/colorPrimary" />
+
+
+    <TextView
         android:id="@+id/tv_can_not_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

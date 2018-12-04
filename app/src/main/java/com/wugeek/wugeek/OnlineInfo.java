@@ -34,6 +34,7 @@ import com.wugeek.wugeek.R;
 import com.wugeek.wugeek.base.TimeAdapter;
 import com.wugeek.wugeek.bean.EchartsLineBean;
 import com.wugeek.wugeek.component.RecycleViewDivider;
+import com.wugeek.wugeek.utils.TimeQuery;
 import com.wugeek.wugeek.utils.TimeUtils;
 
 import java.io.IOException;
@@ -56,8 +57,9 @@ import okhttp3.Response;
 @SuppressWarnings("ALL")
 public class OnlineInfo extends AppCompatActivity {
     List<com.haibin.calendarview.Calendar> schemes = new ArrayList<>();
+    List<com.haibin.calendarview.Calendar> judgeSchemes = new ArrayList<>();
     private Handler handler = null;
-    com.wugeek.wugeek.bean.OnlineInfo onlineInfo;
+    public List<com.wugeek.wugeek.bean.OnlineInfo> onlineInfo = new ArrayList<>();
     private static final String TAG = "OnlineInfo";
     // 用来计算返回键的点击间隔时间
     private long exitTime = 0;
@@ -66,6 +68,7 @@ public class OnlineInfo extends AppCompatActivity {
     RecyclerView recyclerView;
 
     TimeAdapter timeAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,33 +97,17 @@ public class OnlineInfo extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         OkHttpClient okHttpClient = new OkHttpClient.Builder().readTimeout(5, TimeUnit.SECONDS).build();
+        final String token = getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (com.haibin.calendarview.Calendar calendar : schemes) {
-                    final String token = getSharedPreferences("user", MODE_PRIVATE).getString("token", "");
-                    long endTime = TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) + 10800000L;
-                    final String json = "{\"start_time\":" + TimeUtils.toTimestamp(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay()) +
-                            ",\"end_time\":" + endTime + "}";
-                    //查询在线时长
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-
-                    final Request request = new Request.Builder()
-                            .url("http://api.wugeek.vczyh.com/attendance/user/time/getTable")
-                            .addHeader("token", token)
-                            .post(requestBody)
-                            .build();
-                    Log.d(TAG, json);
-                    Call call = okHttpClient.newCall(request);
-                    try {
-                        Response response = call.execute();
-                        String responseBody = response.body().string();
-                        echartsLineBean.times.add(calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay());
-                        onlineInfo = JSON.parseObject(responseBody, com.wugeek.wugeek.bean.OnlineInfo.class);
-                        echartsLineBean.hours.add(TimeUtils.toHours(Double.valueOf(onlineInfo.getData().get(0).getSum())/3600000));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (!(judgeSchemes == schemes)) {
+                    echartsLineBean = new EchartsLineBean();
+                    judgeSchemes = schemes;
+                    onlineInfo = new ArrayList<>();
+                    TimeQuery timeQuery = new TimeQuery(onlineInfo, schemes, token, echartsLineBean);
+                    timeQuery.run();
+                    echartsLineBean.onlineInfo = timeQuery.onlineInfo;
                 }
                 runOnUiThread(new Runnable() {
                     @Override
@@ -128,8 +115,10 @@ public class OnlineInfo extends AppCompatActivity {
                         recyclerView = findViewById(R.id.time_scroll);
                         LinearLayoutManager layoutManager = new LinearLayoutManager(OnlineInfo.this);
                         recyclerView.setLayoutManager(layoutManager);
+                        //设置listview的监听事件
                         timeAdapter = new TimeAdapter(echartsLineBean);
                         recyclerView.setAdapter(timeAdapter);
+
                         RecycleViewDivider recycleViewDivider = new RecycleViewDivider(OnlineInfo.this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(OnlineInfo.this, R.color.bg_toolbar));
                         recyclerView.addItemDecoration(recycleViewDivider);
 
@@ -164,6 +153,7 @@ public class OnlineInfo extends AppCompatActivity {
                         });
 
                     }
+
                 });
             }
         }).start();

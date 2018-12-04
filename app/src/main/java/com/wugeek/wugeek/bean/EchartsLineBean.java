@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class EchartsLineBean {
 
+    public List<OnlineInfo> onlineInfo;
+
     public ArrayList times;
     public ArrayList hours;
 

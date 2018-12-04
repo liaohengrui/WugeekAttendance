@@ -9,21 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="20dp"
-        android:text="考勤时间概况" />
+        android:layout_marginLeft="18dp"
+        android:text="考勤时间概况"
+        android:textSize="13dp" />
 
     <LinearLayout
+        android:id="@+id/time_item_title2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/year_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
             android:text="2018-01-01"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textSize="18dp" />
 
         <TextView
             android:id="@+id/hours_time"
@@ -31,9 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="120dp"
             android:text="当日时长: 0小时"
-            android:textSize="15dp" />
+            android:textSize="13dp" />
     </LinearLayout>
 
-    
 
 </LinearLayout>

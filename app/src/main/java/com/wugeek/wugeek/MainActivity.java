@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 final String pass_word = ((EditText) findViewById(R.id.et_password)).getText().toString();
                 final String json = " {\"account\": \"" + user_name + "\",\"password\": \"" + pass_word + "\" }";
                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-                String url = "http://api.wugeek.vczyh.com/auth/user/auth/account";
+                String url = "http://qiuluo.xin/attendanceapi/auth/user/auth/account";
                 OkHttpClient okHttpClient = new OkHttpClient();
                 final Request request = new Request.Builder()
                         .url(url)
@@ -127,9 +127,10 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                             String macJson = " {\n" +
                                     "     \"mac\":\"" + mac + "\"\n" +
                                     " }";
+                            Log.d(TAG, "onResponse:222222222222 "+macJson);
                             RequestBody requestBody2 = RequestBody.create(MediaType.parse("application/json"), macJson);
                             Request request2 = new Request.Builder()
-                                    .url("http://api.wugeek.vczyh.com/attendance/user/userInfo/alter")
+                                    .url("http://qiuluo.xin/attendanceapi/attendance/user/userInfo/alter")
                                     .addHeader("token", token)
                                     .post(requestBody2)//默认就是GET请求，可以不写
                                     .build();

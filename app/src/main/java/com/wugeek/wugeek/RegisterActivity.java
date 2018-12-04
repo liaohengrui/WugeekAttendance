@@ -1,5 +1,6 @@
 package com.wugeek.wugeek;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -44,15 +45,17 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
     private static final String TAG = "RegisterActivity";
     Handler handler;
     QMUITipDialog errorDialog;
+    QMUITipDialog errorDialog2;
     QMUITipDialog okDialog;
     int time = 60;
+    String prompt = "请检查输入信息完整";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         final SharedPreferences.Editor editor = getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
-        findViewById(R.id.button2).setOnClickListener(this);
+        findViewById(R.id.registerButton).setOnClickListener(this);
         findViewById(R.id.check_code_button).setOnClickListener(this);
         handler = new Handler();
 
@@ -68,7 +71,12 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
         String rePassword = ((EditText) findViewById(R.id.text_repassword)).getText().toString();
         errorDialog = new QMUITipDialog.Builder(RegisterActivity.this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
-                .setTipWord("请检查填写信息")
+                .setTipWord(prompt)
+                .create();
+
+        errorDialog2 = new QMUITipDialog.Builder(RegisterActivity.this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                .setTipWord("请检查输入信息完整")
                 .create();
 
         okDialog = new QMUITipDialog.Builder(RegisterActivity.this)
@@ -78,12 +86,12 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
 
 
         switch (v.getId()) {
-            case R.id.button2:
+            case R.id.registerButton:
                 if (code.isEmpty() || phone.isEmpty() || userName.isEmpty() || password.isEmpty() || rePassword.isEmpty()
                         || !rePassword.equals(password)) {
                     handler.post(runnableErrorUi(false));
                 } else {
-                    String url2 = "http://api.wugeek.vczyh.com/auth/user/register/account2";
+                    String url2 = "http://qiuluo.xin/attendanceapi/auth/user/register/account2";
                     String json2 = "{\n" +
                             "  \"username\": \"" + userName + "\",\n" +
                             "  \"password\": \"" + password + "\",\n" +
@@ -133,7 +141,40 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                                 handler.post(finnish);
 
                             } else {
-                                handler.post(runnableErrorUi(false));
+                                runOnUiThread(() -> {
+                                    if (code == 1030) {
+                                        prompt = "username格式错误";
+                                    }
+                                    if (code == 1032) {
+                                        prompt = "username已存在";
+                                    }
+                                    if (code == 1034) {
+                                        prompt = "password格式错误";
+                                    }
+                                    if (code == 1036) {
+                                        prompt = "phone格式错误";
+                                    }
+                                    if (code == 1038) {
+                                        prompt = "phone已存在";
+                                    }
+                                    if (code == 1044) {
+                                        prompt = "验证码错误";
+                                    }
+                                    if (code == 1046) {
+                                        prompt = "code无效";
+                                    }
+                                    Dialog errorDialogs2 = new QMUITipDialog.Builder(RegisterActivity.this)
+                                            .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                                            .setTipWord(prompt)
+                                            .create();
+                                    errorDialogs2.show();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            errorDialogs2.dismiss();
+                                        }
+                                    }, 2000);
+                                });
                             }
 
                         }
@@ -141,9 +182,10 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                 }
                 break;
             case R.id.check_code_button:
-
+                Button button = findViewById(R.id.check_code_button);
+                button.setEnabled(false);
                 Log.d(TAG, "onClick: check_code_button");
-                String url1 = "http://api.wugeek.vczyh.com/auth/user/register/account2";
+                String url1 = "http://qiuluo.xin/attendanceapi/auth/user/register/account2";
                 String json = "{\n" +
                         "  \"username\":\"" + userName + "\",\n" +
                         "  \"password\":\"" + password + "\",\n" +
@@ -170,8 +212,7 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Button button = findViewById(R.id.check_code_button);
-                                    button.setEnabled(false);
+
                                     button.setBackgroundResource(R.drawable.check_border2);
                                     /** 倒计时60秒，一次1秒 */
                                     CountDownTimer timer = new CountDownTimer(60 * 1000, 1000) {
@@ -185,12 +226,47 @@ public class RegisterActivity extends AppCompatActivity implements Button.OnClic
                                         public void onFinish() {
                                             button.setText("发送验证码");
                                             button.setEnabled(true);
+                                            button.setBackgroundResource(R.drawable.check_border);
                                         }
                                     }.start();
                                 }
                             });
                         } else {
-                            handler.post(runnableErrorUi(false));
+                            runOnUiThread(() -> {
+                                button.setEnabled(true);
+                                if (code == 1030) {
+                                    prompt = "username格式错误";
+                                }
+                                if (code == 1032) {
+                                    prompt = "username已存在";
+                                }
+                                if (code == 1034) {
+                                    prompt = "password格式错误";
+                                }
+                                if (code == 1036) {
+                                    prompt = "phone格式错误";
+                                }
+                                if (code == 1038) {
+                                    prompt = "phone已存在";
+                                }
+                                if (code == 1044) {
+                                    prompt = "验证码错误";
+                                }
+                                if (code == 1046) {
+                                    prompt = "code无效";
+                                }
+                                Dialog errorDialogs = new QMUITipDialog.Builder(RegisterActivity.this)
+                                        .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                                        .setTipWord(prompt)
+                                        .create();
+                                errorDialogs.show();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        errorDialogs.dismiss();
+                                    }
+                                }, 2000);
+                            });
                         }
                     }
                 });
