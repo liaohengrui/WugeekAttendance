@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                             String macJson = " {\n" +
                                     "     \"mac\":\"" + mac + "\"\n" +
                                     " }";
-                            Log.d(TAG, "onResponse:222222222222 "+macJson);
                             RequestBody requestBody2 = RequestBody.create(MediaType.parse("application/json"), macJson);
                             Request request2 = new Request.Builder()
                                     .url("http://qiuluo.xin/attendanceapi/attendance/user/userInfo/alter")

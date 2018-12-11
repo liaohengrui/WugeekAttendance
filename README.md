@@ -17,3 +17,15 @@
 ![选择.png](https://upload-images.jianshu.io/upload_images/11238837-a5edf191990184b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![展示.png](https://upload-images.jianshu.io/upload_images/11238837-88e49ccd174fa333.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+# 代码说明
+**com.wugeek.wugeek.Calendar**
+选择日期的Ativity
+**com.wugeek.wugeek.DayOnlineInfo**
+当日详情的Activity
+**com.wugeek.wugeek.MainActivity**
+登入Activity
+**com.wugeek.wugeek.OnlineInfo**
+日期总览Activity
+**com.wugeek.wugeek.RegisterActivity**
+注册Activity

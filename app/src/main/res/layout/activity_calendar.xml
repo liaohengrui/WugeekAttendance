@@ -156,7 +156,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="点击查看日期详情-----By廖恒锐"
+                    android:text="点击查看日期详情"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
